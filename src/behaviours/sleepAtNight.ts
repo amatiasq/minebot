@@ -1,4 +1,4 @@
-import { MineBotBehaviour } from './bot';
+import { MineBotBehaviour } from '../bot';
 
 export function sleepAtNight(BED_TIME = 12000): MineBotBehaviour {
   return async (bot, { findBlock, goto }) => {

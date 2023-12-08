@@ -1,3 +1,4 @@
+import minecraftData from 'minecraft-data';
 import type { Bot, BotOptions } from 'mineflayer';
 import { createBot } from 'mineflayer';
 import { Block } from 'prismarine-block';
@@ -17,7 +18,7 @@ export class MineBot {
   readonly bot: Bot;
   readonly ready: Promise<void>;
   readonly behaviours: MineBotBehaviour[] = [];
-  private readonly util: ReturnType<typeof createUtils>;
+  private readonly util!: ReturnType<typeof createUtils>;
 
   debug = false;
 
@@ -33,11 +34,13 @@ export class MineBot {
     this.bot.loadPlugin(pathfinder);
 
     this.ready = new Promise((resolve) => {
-      this.bot.once('spawn', resolve);
-      this.startLoop();
+      this.bot.once('spawn', () => {
+        // @ts-ignore
+        this.util = createUtils(this.bot, this);
+        resolve();
+        this.startLoop();
+      });
     });
-
-    this.util = createUtils(this.bot, this);
   }
 
   say(message: string) {
@@ -64,17 +67,20 @@ export class MineBot {
 }
 
 function createUtils(bot: Bot, mineBot: MineBot) {
+  const mcData = minecraftData(bot.version);
+
   const defaultMove = new Movements(bot);
   bot.pathfinder.setMovements(defaultMove);
 
   return {
-    findBlock: (predicate: (block: Block) => boolean) =>
+    getBlock: (name: string) => mcData.blocksByName[name],
+
+    findBlock: (predicate: number | ((block: Block) => boolean)) =>
       bot.findBlock({ matching: predicate }),
 
-    goto(position: Vec3, range = 2) {
+    goto: (position: Vec3, range = 2) =>
       bot.pathfinder.goto(
         new GoalNear(position.x, position.y, position.z, range)
-      );
-    },
+      ),
   };
 }

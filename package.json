@@ -3,6 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts"
   },
   "devDependencies": {
@@ -13,10 +14,13 @@
   },
   "dependencies": {
     "@total-typescript/ts-reset": "^0.5.1",
+    "@types/vec3": "^0.1.4",
     "chalk": "^5.3.0",
     "minecraft-data": "^3.50.0",
     "mineflayer": "^4.14.0",
     "mineflayer-pathfinder": "^2.4.5",
+    "mineflayer-web-inventory": "^1.8.4",
+    "prismarine-block": "^1.17.1",
     "vec3": "^0.1.8"
   }
 }

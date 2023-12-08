@@ -1,14 +1,9 @@
-import minecraftData from 'minecraft-data';
 import type { Bot, BotOptions } from 'mineflayer';
 import { createBot } from 'mineflayer';
-import { Block } from 'prismarine-block';
-import { Vec3 } from 'vec3';
 
-import { Movements, goals, pathfinder } from 'mineflayer-pathfinder';
+import { pathfinder } from 'mineflayer-pathfinder';
+import { MineUtils, createUtils } from './util';
 
-const { GoalNear } = goals;
-
-export type MineUtils = ReturnType<typeof createUtils>;
 export type MineBotBehaviour = (
   bot: Bot,
   util: MineUtils
@@ -17,8 +12,11 @@ export type MineBotBehaviour = (
 export class MineBot {
   readonly bot: Bot;
   readonly ready: Promise<void>;
-  readonly behaviours: MineBotBehaviour[] = [];
-  private readonly util!: ReturnType<typeof createUtils>;
+  readonly behaviours: {
+    name: string;
+    behaviour: MineBotBehaviour;
+  }[] = [];
+  private readonly util!: MineUtils;
 
   debug = false;
 
@@ -35,8 +33,9 @@ export class MineBot {
 
     this.ready = new Promise((resolve) => {
       this.bot.once('spawn', () => {
+        const util = createUtils(this.bot, this);
         // @ts-ignore
-        this.util = createUtils(this.bot, this);
+        this.util = util;
         resolve();
         this.startLoop();
       });
@@ -47,40 +46,36 @@ export class MineBot {
     this.bot.chat(message);
   }
 
-  addBehaviour(behaviour: MineBotBehaviour) {
-    this.behaviours.push(behaviour);
+  addBehaviour(name: string, behaviour: MineBotBehaviour) {
+    this.behaviours.push({ name, behaviour });
   }
 
   private async startLoop() {
     for (let i = 0; true; i++) {
+      this.util.reset(i);
+
       if (this.debug) {
         this.bot.chat(`Tick ${i}`);
       }
 
-      for (const behaviour of this.behaviours) {
-        await behaviour(this.bot, this.util);
+      for (const { name, behaviour } of this.behaviours) {
+        // @ts-ignore
+        console.log('Running behaviour', name);
+
+        try {
+          await behaviour(this.bot, this.util);
+        } catch (e) {
+          this.util.log('Error in behaviour:');
+          console.error(e);
+        }
+
+        if (this.util.aborted) {
+          console.log('Aborted');
+          break;
+        }
       }
 
       await this.bot.waitForTicks(10);
     }
   }
-}
-
-function createUtils(bot: Bot, mineBot: MineBot) {
-  const mcData = minecraftData(bot.version);
-
-  const defaultMove = new Movements(bot);
-  bot.pathfinder.setMovements(defaultMove);
-
-  return {
-    getBlock: (name: string) => mcData.blocksByName[name],
-
-    findBlock: (predicate: number | ((block: Block) => boolean)) =>
-      bot.findBlock({ matching: predicate }),
-
-    goto: (position: Vec3, range = 2) =>
-      bot.pathfinder.goto(
-        new GoalNear(position.x, position.y, position.z, range)
-      ),
-  };
 }

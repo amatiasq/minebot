@@ -7,8 +7,8 @@ import { sleepAtNight } from './behaviours/sleepAtNight';
 import { MineBot } from './bot';
 
 const options = {
-  host: 'localhost',
-  port: 12345,
+  host: 'minecraft.amatiasq.com',
+  port: 25565,
 };
 
 const test = new MineBot('Tester', options);

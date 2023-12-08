@@ -8,8 +8,8 @@ export function harvestLumber(
 ): MineBotBehaviour {
   return async (bot, { log, getBlock, goto, findBlock }) => {
     for (const [trunkName, leafName] of Object.entries(target)) {
-      const trunkData = getBlock(trunkName);
-      const isTrunk = (block: Block) => block.name === trunkName;
+      const isTrunk = (block: Block) =>
+        block.name === trunkName || block.name === leafName;
 
       let trunk = findBlock(isTrunk)!;
       if (!trunk) return;

@@ -29,6 +29,13 @@ export class MineBot {
       username: name,
     });
 
+    this.bot.on('chat', (username, message) => {
+      if (/\bstop\./.test(message)) {
+        console.log(`STOP REQUESTED BY ${username}`);
+        process.exit(0);
+      }
+    });
+
     this.bot.loadPlugin(pathfinder);
 
     this.ready = new Promise((resolve) => {

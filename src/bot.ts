@@ -66,11 +66,17 @@ export class MineBot {
       }
 
       for (const { name, behaviour } of this.behaviours) {
-        // @ts-ignore
         console.log('Running behaviour', name);
 
+        const TIMEOUT_MINUTES = 5;
+        const TIMEOUT_SECONDS = TIMEOUT_MINUTES * 60;
+        const TIMEOUT = TIMEOUT_SECONDS * 1000;
+
         try {
-          await behaviour(this.bot, this.util);
+          await Promise.race([
+            behaviour(this.bot, this.util),
+            timeout(TIMEOUT),
+          ]);
         } catch (e) {
           this.util.log('Error in behaviour:');
           console.error(e);
@@ -85,4 +91,8 @@ export class MineBot {
       await this.bot.waitForTicks(10);
     }
   }
+}
+
+function timeout(ms: number) {
+  return new Promise((_, reject) => setTimeout(() => reject('Timeout'), ms));
 }

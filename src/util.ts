@@ -31,7 +31,10 @@ export function createUtils(bot: Bot, mineBot: MineBot) {
 
     log: (...args: any[]) =>
       console.log(
-        `  [${counter}]`,
+        `  ${new Date()
+          .toISOString()
+          .substring(0, 19)
+          .replace('T', ' ')} [${counter}]`,
         ...args.map((x) => (x instanceof Vec3 ? x.toString() : x))
       ),
 

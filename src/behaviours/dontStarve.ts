@@ -7,6 +7,10 @@ export function dontStarve(edibles: string[]): MineBotBehaviour {
 
     for (const edible of edibles) {
       const data = getBlock(edible);
+
+      // 'bread' is not a block apparently
+      return;
+
       const item = bot.inventory.items().find((item) => item.type === data.id);
 
       if (item) {

@@ -1,8 +1,8 @@
 // import data from 'minecraft-data';
 import { depositLoot } from './behaviours/depositLoot';
 import { dontStarve } from './behaviours/dontStarve';
-import { harvestCrops } from './behaviours/harvestCrops';
-import { harvestLumber } from './behaviours/harvestLumber';
+import { harvest } from './behaviours/harvest';
+import { plant } from './behaviours/plant';
 import { sleepAtNight } from './behaviours/sleepAtNight';
 import { MineBot } from './bot';
 
@@ -15,21 +15,23 @@ const test = new MineBot('Tester', options);
 
 test.addBehaviour('sleepAtNight', sleepAtNight());
 test.addBehaviour('dontStarve', dontStarve(['bread']));
+test.addBehaviour('plant', plant());
+test.addBehaviour('depositLoot', depositLoot());
 
-test.addBehaviour(
-  'depositLoot',
-  depositLoot(['dirt', 'oak_log', 'spruce_log', 'birch_log'])
-);
+// test.addBehaviour('harvestCrops', harvestCrops({ wheat: 'wheat_seeds' }));
 
-test.addBehaviour('harvestCrops', harvestCrops({ wheat: 'wheat_seeds' }));
+test.addBehaviour('harvestGrass', harvest('grass', 'tall_grass'));
 
 test.addBehaviour(
   'harvestLumber',
-  harvestLumber({
-    oak_log: 'oak_leaves',
-    spruce_log: 'spruce_leaves',
-    birch_log: 'birch_leaves',
-  })
+  harvest(
+    'oak_log',
+    'oak_leaves',
+    'spruce_log',
+    'spruce_leaves',
+    'birch_log',
+    'birch_leaves'
+  )
 );
 
 // await harvestCrops();

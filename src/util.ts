@@ -8,6 +8,8 @@ import type { MineBot } from './bot';
 
 const { GoalNear } = goals;
 
+const date = () => new Date().toISOString().substring(0, 19).replace('T', ' ');
+
 export type MineUtils = ReturnType<typeof createUtils>;
 
 export function createUtils(bot: Bot, mineBot: MineBot) {
@@ -31,10 +33,7 @@ export function createUtils(bot: Bot, mineBot: MineBot) {
 
     log: (...args: any[]) =>
       console.log(
-        `  ${new Date()
-          .toISOString()
-          .substring(0, 19)
-          .replace('T', ' ')} [${counter}]`,
+        `  ${date()}`,
         ...args.map((x) => (x instanceof Vec3 ? x.toString() : x))
       ),
 

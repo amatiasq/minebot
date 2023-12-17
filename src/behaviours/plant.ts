@@ -1,7 +1,7 @@
 import vec3 from 'vec3';
 
 export function plant(...only: string[]): import('../bot').MineBotBehaviour {
-  return async (bot, { log, goto, findBlock }) => {
+  return async (bot, { log, goto }) => {
     const seeds = bot.inventory.slots
       .filter((x) => x && x.name.endsWith('_sapling'))
       .filter(Boolean);

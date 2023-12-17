@@ -88,7 +88,7 @@ export class MineBot {
         }
       }
 
-      await this.bot.waitForTicks(10);
+      await this.bot.waitForTicks(100);
     }
   }
 }

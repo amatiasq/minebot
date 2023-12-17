@@ -7,7 +7,7 @@ import { sleepAtNight } from './behaviours/sleepAtNight';
 import { MineBot } from './bot';
 
 const options = {
-  host: 'minecraft.amatiasq.com',
+  host: 'localhost',
   port: 25565,
 };
 
